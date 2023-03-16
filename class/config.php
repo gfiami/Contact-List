@@ -19,6 +19,7 @@ function clearInputs($data)
 //check images
 function checkImage($image)
 {
+    global $uploadOk;
     $target_dir = "contact-images";
     $target_file = $target_dir . basename($image["name"]);
     $uploadOk = false;

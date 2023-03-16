@@ -8,22 +8,30 @@ if (
 ) {
     //anti inject
     $name = clearInputs($_POST['name']);
+    $birthdate = clearInputs($_POST['birthdate']);
     $email = clearInputs($_POST['email']);
-    $date = clearInputs($_POST['birthdate']);
     $phone = clearInputs($_POST['phone']);
 
     //check if fields are empty
-    if (empty($name) || empty($email) || empty($date) || empty($phone)) {
+    if (empty($name) || empty($email) || empty($birthdate) || empty($phone)) {
         $globalError = "All fields are required";
     } else {
-
         //validate image and save in folder if ok (ADJUST LATER TO ONLY MOVE IF EVERYTHING IS OK)
         if (checkImage($_FILES['contact-image'])) {
             $format = pathinfo($_FILES['contact-image']['name'], PATHINFO_EXTENSION);
             $imgName = uniqid() . ".$format";
             $tmp = $_FILES['contact-image']['tmp_name'];
-            move_uploaded_file($tmp, "contact-images/$imgName");
+            //this will be used later: move_uploaded_file($tmp, "contact-images/$imgName");
+        } else {
+            $globalError = "There is a problem with this file";
         }
+        if ($uploadOk) {
+            $contact = new Contact($name, $birthdate, $email, $phone, $imgName);
+            $contact->insert();
+            move_uploaded_file($tmp, "contact-images/$imgName");
+            $globalMessage = "Success!";
+        }
+        //inset into database if thereis no problem
     }
 } else {
     //user submit with empty fields
@@ -54,7 +62,11 @@ if (
         <legend class="float-none w-auto p-2">Add new contact</legend>
         <p class="global-error"><?php if (isset($globalError)) {
                                     echo "$globalError";
-                                } ?></p>
+                                }
+                                if (isset($globalMessage)) {
+                                    echo "$globalMessage";
+                                }
+                                ?></p>
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
