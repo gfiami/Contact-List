@@ -1,4 +1,16 @@
-<?php ?>
+<?php
+require('upload-image.php');
+
+if (isset($_POST['submit'])) {
+    //validate image
+    if (checkImage($_FILES['contact-image'])) {
+        $format = pathinfo($_FILES['contact-image']['name'], PATHINFO_EXTENSION);
+        $imgName = uniqid() . ".$format";
+        $tmp = $_FILES['contact-image']['tmp_name'];
+        move_uploaded_file($tmp, "contact-images/$imgName");
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,29 +34,29 @@
             <div class="row">
                 <div class="col">
                     <label for="name">Full Name</label>
-                    <input type="text" name="name" id="name" class="form-control" placeholder="Full Name" required>
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Full Name">
                 </div>
                 <div class="col">
                     <label for="email">Email address</label>
 
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Email" required>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col">
                     <label for="date">Birthdate</label>
-                    <input type="date" max="" name="date" id="date" class="form-control" placeholder="Birthdate" required>
+                    <input type="date" max="" name="date" id="date" class="form-control" placeholder="Birthdate">
                 </div>
                 <div class="col">
                     <label for="phone">Phone</label>
-                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone" required>
+                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone">
                 </div>
             </div>
             <br>
             <div class="form-group">
                 <label for="exampleFormControlFile1">Contact image</label> <br>
-                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                <input type="file" name="contact-image" class="form-control-file" id="exampleFormControlFile1">
             </div>
             <br>
             <div class="submitContainer"> <input name="submit" type="submit" class="btn btn-primary" value='Submit'>
