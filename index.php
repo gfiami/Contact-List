@@ -1,8 +1,8 @@
 <?php
 require_once('class/config.php');
+require_once('autoload.php');
 
 //check isset for name, email, birth, phone, image, and not empty image
-require('upload-image.php');
 if (
     isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
 ) {
