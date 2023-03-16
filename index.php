@@ -1,15 +1,37 @@
 <?php
-require('upload-image.php');
+require_once('class/config.php');
 
-if (isset($_POST['submit'])) {
-    //validate image
-    if (checkImage($_FILES['contact-image'])) {
-        $format = pathinfo($_FILES['contact-image']['name'], PATHINFO_EXTENSION);
-        $imgName = uniqid() . ".$format";
-        $tmp = $_FILES['contact-image']['tmp_name'];
-        move_uploaded_file($tmp, "contact-images/$imgName");
+//check isset for name, email, birth, phone, image, and not empty image
+require('upload-image.php');
+if (
+    isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
+) {
+    //anti inject
+    $name = clearInputs($_POST['name']);
+    $email = clearInputs($_POST['email']);
+    $date = clearInputs($_POST['birthdate']);
+    $phone = clearInputs($_POST['phone']);
+
+    //check if fields are empty
+    if (empty($name) || empty($email) || empty($date) || empty($phone)) {
+        $globalError = "All fields are required";
+    } else {
+
+        //validate image and save in folder if ok (ADJUST LATER TO ONLY MOVE IF EVERYTHING IS OK)
+        if (checkImage($_FILES['contact-image'])) {
+            $format = pathinfo($_FILES['contact-image']['name'], PATHINFO_EXTENSION);
+            $imgName = uniqid() . ".$format";
+            $tmp = $_FILES['contact-image']['tmp_name'];
+            move_uploaded_file($tmp, "contact-images/$imgName");
+        }
+    }
+} else {
+    //user submit with empty fields
+    if (isset($_POST['submit'])) {
+        $globalError = "All fields are required";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +52,9 @@ if (isset($_POST['submit'])) {
     <h1 class="title">Contact List</h1>
     <fieldset class="border p-2">
         <legend class="float-none w-auto p-2">Add new contact</legend>
+        <p class="global-error"><?php if (isset($globalError)) {
+                                    echo "$globalError";
+                                } ?></p>
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
@@ -46,15 +71,15 @@ if (isset($_POST['submit'])) {
             <div class="row">
                 <div class="col">
                     <label for="date">Birthdate</label>
-                    <input type="date" max="" name="date" id="date" class="form-control" placeholder="Birthdate">
+                    <input type="date" max="" name="birthdate" id="date" class="form-control" placeholder="Birthdate">
                 </div>
                 <div class="col">
-                    <label for="phone">Phone</label>
-                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone">
+                    <label for="phone">Phone (10 to 13 digits)</label>
+                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
                 </div>
             </div>
             <br>
-            <div class="form-group">
+            <div class=" form-group">
                 <label for="exampleFormControlFile1">Contact image</label> <br>
                 <input type="file" name="contact-image" class="form-control-file" id="exampleFormControlFile1">
             </div>
