@@ -1,0 +1,16 @@
+*{
+    box-sizing: border-box;
+}
+fieldset{
+    width: 50%;
+    margin: 0 auto;
+}
+
+.title{
+    text-align: center;
+}
+
+.submitContainer{
+    width: 100%;
+    text-align: center;
+}
