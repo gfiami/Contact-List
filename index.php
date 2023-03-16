@@ -27,9 +27,10 @@ if (
         }
         if ($uploadOk) {
             $contact = new Contact($name, $birthdate, $email, $phone, $imgName);
-            $contact->insert();
-            move_uploaded_file($tmp, "contact-images/$imgName");
-            $globalMessage = "Success!";
+            if ($contact->insert()) {
+                move_uploaded_file($tmp, "contact-images/$imgName");
+                $globalMessage = "Success!";
+            }
         }
         //inset into database if thereis no problem
     }
@@ -65,6 +66,9 @@ if (
                                 }
                                 if (isset($globalMessage)) {
                                     echo "$globalMessage";
+                                }
+                                if (isset($contact->error['contactError'])) {
+                                    echo $contact->error['contactError'];
                                 }
                                 ?></p>
         <form method="post" enctype="multipart/form-data">
