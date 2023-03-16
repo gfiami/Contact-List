@@ -18,7 +18,7 @@
     <h1 class="title">Contact List</h1>
     <fieldset class="border p-2">
         <legend class="float-none w-auto p-2">Add new contact</legend>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
                     <label for="name">Full Name</label>
@@ -81,8 +81,11 @@
                 </td>
                 <td>(21)111111111</td>
                 <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
                         Edit
+                    </button>
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                        Delete
                     </button>
                 </td>
             </tr>
@@ -103,8 +106,11 @@
                 </td>
                 <td>(21)111111111</td>
                 <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
                         Edit
+                    </button>
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                        Delete
                     </button>
                 </td>
             </tr>
@@ -125,8 +131,11 @@
                 </td>
                 <td>(21)111111111</td>
                 <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
                         Edit
+                    </button>
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                        Delete
                     </button>
                 </td>
             </tr>
