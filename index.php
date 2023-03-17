@@ -40,7 +40,45 @@ if (
         $globalError = "All fields are required";
     }
 }
+///EDIT PORTIONS \/
+if (
+    isset($_POST['nameEdit']) && isset($_POST['emailEdit']) && isset($_POST['birthdateEdit']) && isset($_POST['phoneEdit']) && isset($_POST['submitEdit']) && !($_FILES['contact-image-edit']['error'] == 4 || ($_FILES['contact-image-edit']['size'] == 0 && $_FILES['contact-image-edit']['error'] == 0))
+) {
+    //anti inject
+    $nameEdit = clearInputs($_POST['nameEdit']);
+    $birthdateEdit = clearInputs($_POST['birthdateEdit']);
+    $emailEdit = clearInputs($_POST['emailEdit']);
+    $phoneEdit = clearInputs($_POST['phoneEdit']);
 
+    //check if fields are empty
+    if (empty($nameEdit) || empty($emailEdit) || empty($birthdateEdit) || empty($phoneEdit)) {
+        $globalError = "All fields are required to edit";
+    } else {
+        //validate image and save in folder if ok (ADJUST LATER TO ONLY MOVE IF EVERYTHING IS OK)
+        //REMEMBER TO ADJUST TO DELETE CURRENT IMAGE!!!
+        if (checkImage($_FILES['contact-image-edit'])) {
+            $formatEdit = pathinfo($_FILES['contact-image-edit']['name'], PATHINFO_EXTENSION);
+            $imgNameEdit = uniqid() . ".$formatEdit";
+            $tmpEdit = $_FILES['contact-image-edit']['tmp_name'];
+            //this will be used later: move_uploaded_file($tmp, "contact-images/$imgName");
+        } else {
+            $globalError = "There is a problem with this file";
+        }
+        if ($uploadOk) {
+            $idEdit = $_POST['idEdit'];
+            $loadPage->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
+            if ($loadPage->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
+                move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit");
+                $globalMessage = "Success Editing!";
+            }
+        }
+    }
+} else {
+    //user submit with empty fields
+    if (isset($_POST['submitEdit'])) {
+        $globalError = "All fields are required";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -89,6 +127,8 @@ if (
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
             </div>
             <br>
+            <input hidden type='number' class='idEdit' value='' name='idEdit' readonly>
+
             <div class="submitContainer"> <input name="submitEdit" type="submit" class="btn btn-primary" value='Submit'>
             </div>
 
@@ -135,6 +175,7 @@ if (
                 <input type="file" name="contact-image" class="form-control-file" id="exampleFormControlFile1">
             </div>
             <br>
+
             <div class="submitContainer"> <input name="submit" type="submit" class="btn btn-primary" value='Submit'>
             </div>
 
@@ -156,7 +197,6 @@ if (
                 $loading = $loadPage->findAll();
                 if (count($loading) > 0) {
                     foreach ($loading as $ctt) {
-
                         echo "<tr>
                         <td>
                             <div class='d-flex align-items-center'>
@@ -175,10 +215,10 @@ if (
                         </td>
                         <td>{$ctt['phone']}</td>
                         <td>
-                            <button onclick='editContact(this)' data-birth='{$ctt['birth']} data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
                                 Edit
                             </button>
-                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']} data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
                                 Delete
                             </button>
                         </td>
