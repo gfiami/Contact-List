@@ -5,14 +5,14 @@ function editContact(element){
     let emailEdit = element.getAttribute('data-email')
     let phoneEdit = element.getAttribute('data-phone')
     let birthEdit = element.getAttribute('data-birth');
+    let photoEdit = element.getAttribute('data-photo');
     let idEdited = element.getAttribute('data-id');
-    console.log(idEdited);
     document.querySelector('#nameEdit').value = nameEdit
     document.querySelector('#emailEdit').value = emailEdit
     document.querySelector('#phoneEdit').value = phoneEdit
     document.querySelector('#birthdateEdit').value = birthEdit
+    document.querySelector('#contact-image-file').value = photoEdit
     document.querySelector('.idEdit').value = idEdited
-    
    }
 
 function deleteContact(element){

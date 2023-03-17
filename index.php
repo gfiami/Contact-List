@@ -60,7 +60,6 @@ if (
             $formatEdit = pathinfo($_FILES['contact-image-edit']['name'], PATHINFO_EXTENSION);
             $imgNameEdit = uniqid() . ".$formatEdit";
             $tmpEdit = $_FILES['contact-image-edit']['tmp_name'];
-            //this will be used later: move_uploaded_file($tmp, "contact-images/$imgName");
         } else {
             $globalError = "There is a problem with this file";
         }
@@ -68,6 +67,7 @@ if (
             $idEdit = $_POST['idEdit'];
             $contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
             if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
+                unlink("contact-images/" . $_POST['photoFile']);
                 move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit");
                 $globalMessage = "Success Editing!";
             } else {
@@ -127,6 +127,8 @@ if (
             <div class=" form-group">
                 <label for="contact-image-edit">Edit Contact image</label> <br>
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
+                <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file" readonly>
+
             </div>
             <br>
             <input hidden type='number' class='idEdit' value='' name='idEdit' readonly>
@@ -217,10 +219,10 @@ if (
                         </td>
                         <td>{$ctt['phone']}</td>
                         <td>
-                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
                                 Edit
                             </button>
-                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
                                 Delete
                             </button>
                         </td>
