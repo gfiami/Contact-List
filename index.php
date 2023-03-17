@@ -59,7 +59,42 @@ if (
 
 <body>
     <h1 class="title">Contact List</h1>
-    <fieldset class="border p-2">
+    <fieldset hidden class="border p-2 edit">
+        <legend class="float-none w-auto p-2">Edit Contact Infos</legend>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col">
+                    <label for="nameEdit">Edti Full Name</label>
+                    <input value=" " type="text" name="nameEdit" id="nameEdit" class="form-control" placeholder="Edit Full Name">
+                </div>
+                <div class="col">
+                    <label for="emailEdit">Edit Email address</label>
+                    <input type="email" name="emailEdit" id="emailEdit" class="form-control" placeholder="Edit Email">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <label for="birthdateEdit">Edit Birthdate</label>
+                    <input type="date" max="" name="birthdateEdit" id="birthdateEdit" class="form-control" placeholder="Edit Birthdate">
+                </div>
+                <div class="col">
+                    <label for="phoneEdit">Edit Phone (10 to 13 digits)</label>
+                    <input type="tel" name="phoneEdit" id="phoneEdit" class="form-control" placeholder="Edit Phone (Only numbers)" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
+                </div>
+            </div>
+            <br>
+            <div class=" form-group">
+                <label for="contact-image-edit">Edit Contact image</label> <br>
+                <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
+            </div>
+            <br>
+            <div class="submitContainer"> <input name="submit" type="submit" class="btn btn-primary" value='Submit'>
+            </div>
+
+        </form>
+    </fieldset>
+    <fieldset class="border p-2 insert">
         <legend class="float-none w-auto p-2">Add new contact</legend>
         <p class="global-error"><?php if (isset($globalError)) {
                                     echo "$globalError";
@@ -121,6 +156,7 @@ if (
                 $loading = $loadPage->findAll();
                 if (count($loading) > 0) {
                     foreach ($loading as $ctt) {
+
                         echo "<tr>
                         <td>
                             <div class='d-flex align-items-center'>
@@ -139,10 +175,10 @@ if (
                         </td>
                         <td>{$ctt['phone']}</td>
                         <td>
-                            <button type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']} data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
                                 Edit
                             </button>
-                            <button type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']} data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
                                 Delete
                             </button>
                         </td>
@@ -157,6 +193,7 @@ if (
         </tbody>
     </table>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="./script/edit-delete.js"></script>
 </body>
 
 </html>
