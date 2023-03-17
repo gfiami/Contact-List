@@ -38,7 +38,7 @@ class Contact extends CRUD
     public function insert()
     {
         if ($this->emailAtDatabase() || $this->phoneAtDatabase()) {
-            $this->error['contactError'] = 'This contact is already registered';
+            $this->error['duplicateError'] = 'This contact phone or email is already registered.';
             return false;
         }
         $sql = "INSERT INTO $this->table VALUES (null,?,?,?,?,?)";
@@ -107,6 +107,54 @@ class Contact extends CRUD
         $this->email = $email;
         $this->phone = $phone;
         $this->photo = $photo;
+    }
+    function validateInfoInsert()
+    {
+        if (!preg_match("/^([a-zA-Z' ]+)$/", $this->name)) {
+            $this->error['nameError'] = "Special characters aren't allowed for names.";
+            //return false;
+        } else {
+            global $nameOkay;
+            $nameOkay = true;
+            //return true;
+        }
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->error['emailError'] = "Please use a valid email format.";
+        } else {
+            global $emailOkay;
+            $emailOkay = true;
+            //return true;
+        }
+        if (!preg_match("/[0-9]{10,13}/", $this->phone)) {
+            $this->error['phoneError'] = "Please use a valid number, including DDD and IDD. Digits[0-9] only.";
+        } else {
+            global $phoneOkay;
+            $phoneOkay = true;
+        }
+    }
+    function validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit)
+    {
+        if (!preg_match("/^([a-zA-Z' ]+)$/", $nameEdit)) {
+            $this->error['nameError'] = "Special characters aren't allowed for names.";
+            //return false;
+        } else {
+            global $nameOkayEdit;
+            $nameOkayEdit = true;
+            //return true;
+        }
+        if (!filter_var($emailEdit, FILTER_VALIDATE_EMAIL)) {
+            $this->error['emailError'] = "Please use a valid email format.";
+        } else {
+            global $emailOkayEdit;
+            $emailOkayEdit = true;
+            //return true;
+        }
+        if (!preg_match("/[0-9]{10,13}/", $phoneEdit)) {
+            $this->error['phoneError'] = "Please use a valid number, including DDD and IDD. Digits[0-9] only.";
+        } else {
+            global $phoneOkayEdit;
+            $phoneOkayEdit = true;
+        }
     }
     function __construct(
         public string $name = '',

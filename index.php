@@ -2,6 +2,10 @@
 require_once('class/config.php');
 require_once('autoload.php');
 $contact = new Contact();
+$name = '';
+$birthdate = '';
+$email = '';
+$phone = '';
 //check isset for name, email, birth, phone, image, and not empty image
 if (
     isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
@@ -14,32 +18,34 @@ if (
 
     //check if fields are empty
     if (empty($name) || empty($email) || empty($birthdate) || empty($phone)) {
-        $globalError = "All fields are required";
+        $globalError = "All fields are required.";
     } else {
-        //validate image and save in folder if ok (ADJUST LATER TO ONLY MOVE IF EVERYTHING IS OK)
+        //validate image 
         if (checkImage($_FILES['contact-image'])) {
             $format = pathinfo($_FILES['contact-image']['name'], PATHINFO_EXTENSION);
             $imgName = uniqid() . ".$format";
             $tmp = $_FILES['contact-image']['tmp_name'];
-            //this will be used later: move_uploaded_file($tmp, "contact-images/$imgName");
-        } else {
-            $globalError = "There is a problem with this file";
         }
+        //after all validation and insert, upload image
         if ($uploadOk) {
             $contact->setContactInfo($name, $birthdate, $email, $phone, $imgName);
-            if ($contact->insert()) {
-                move_uploaded_file($tmp, "contact-images/$imgName");
-                $globalMessage = "Success!";
+            $contact->validateInfoInsert();
+            if (isset($nameOkay) && isset($emailOkay) && isset($phoneOkay)) {
+                if ($contact->insert()) {
+                    move_uploaded_file($tmp, "contact-images/$imgName");
+                    $globalMessage = "New contact added!";
+                }
             }
         }
-        //inset into database if thereis no problem
     }
 } else {
     //user submit with empty fields
     if (isset($_POST['submit'])) {
-        $globalError = "All fields are required";
+        $globalError = "All fields are required.";
     }
 }
+
+
 ///EDIT PORTIONS \/
 if (
     isset($_POST['nameEdit']) && isset($_POST['emailEdit']) && isset($_POST['birthdateEdit']) && isset($_POST['phoneEdit']) && isset($_POST['submitEdit']) && !($_FILES['contact-image-edit']['error'] == 4 || ($_FILES['contact-image-edit']['size'] == 0 && $_FILES['contact-image-edit']['error'] == 0))
@@ -52,45 +58,50 @@ if (
 
     //check if fields are empty
     if (empty($nameEdit) || empty($emailEdit) || empty($birthdateEdit) || empty($phoneEdit)) {
-        $globalError = "All fields are required to edit";
+        $globalErrorEdit = "All fields are required to edit.";
     } else {
-        //validate image and save in folder if ok (ADJUST LATER TO ONLY MOVE IF EVERYTHING IS OK)
-        //REMEMBER TO ADJUST TO DELETE CURRENT IMAGE!!!
+        //validate image 
         if (checkImage($_FILES['contact-image-edit'])) {
             $formatEdit = pathinfo($_FILES['contact-image-edit']['name'], PATHINFO_EXTENSION);
             $imgNameEdit = uniqid() . ".$formatEdit";
             $tmpEdit = $_FILES['contact-image-edit']['tmp_name'];
         } else {
-            $globalError = "There is a problem with this file";
+            $globalErrorEdit = "There is a problem with this file.";
         }
         if ($uploadOk) {
-            $idEdit = $_POST['idEdit'];
-            $contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
-            if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
-                unlink("contact-images/" . $_POST['photoFileEdit']);
-                move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit");
-                $globalMessage = "Success Editing!";
+            $contact->validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit);
+            if (isset($nameOkayEdit) && isset($emailOkayEdit) && isset($phoneOkayEdit)) {
+                $idEdit = $_POST['idEdit'];
+                if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
+                    unlink("contact-images/" . $_POST['photoFileEdit']);
+                    move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit"); //saving image
+                    $globalMessageEdit = "Success Editing!";
+                } else {
+                    $globalErrorEdit = "";
+                    $globalMessageEdit = $contact->error['updateError'];
+                }
             } else {
-                $globalMessage = $contact->error['updateError'];
+                $globalErrorEdit = "";
             }
         }
     }
 } else {
     //user submit with empty fields
     if (isset($_POST['submitEdit'])) {
-        $globalError = "All fields are required";
+        $globalErrorEdit = "All fields are required to edit.";
     }
 }
 
 //delete portions
 if (isset($_POST['submitDelete'])) {
+    echo "$_POST[photoFileDelete]";
     $nameDelete = clearInputs($_POST['nameDelete']);
     $emailDelete = clearInputs($_POST['emailDelete']);
     $phoneDelete = clearInputs($_POST['phoneDelete']);
     $idDelete = clearInputs($_POST['idDelete']);
     if (empty($nameDelete) || empty($emailDelete) || empty($phoneDelete) || empty($idDelete)) {
         echo $nameDelete, $emailDelete, $phoneDelete, $idDelete;
-        $globalError = "All fields are required to delete";
+        $globalError = "All fields are required to delete.";
     } else {
         if ($contact->delete($idDelete, $nameDelete, $emailDelete, $phoneDelete)) {
             unlink("contact-images/" . $_POST['photoFileDelete']);
@@ -136,7 +147,7 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="phoneDelete">Phone</label>
-                    <input readonly type="tel" name="phoneDelete" id="phoneDelete" class="form-control" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
+                    <input readonly type="tel" name="phoneDelete" id="phoneDelete" class="form-control" minlength="10" maxlength="13">
                 </div>
                 <div class="col">
                     <label for="emailDelete">Email</label>
@@ -170,11 +181,11 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="nameEdit">Edit Full Name</label>
-                    <input value=" " type="text" name="nameEdit" id="nameEdit" class="form-control" placeholder="Edit Full Name">
+                    <input value="" type="text" name="nameEdit" id="nameEdit" class="form-control" placeholder="Edit Full Name">
                 </div>
                 <div class="col">
                     <label for="emailEdit">Edit Email address</label>
-                    <input type="email" name="emailEdit" id="emailEdit" class="form-control" placeholder="Edit Email">
+                    <input value="" type="text" name="emailEdit" id="emailEdit" class="form-control" placeholder="Edit Email">
                 </div>
             </div>
             <br>
@@ -185,7 +196,7 @@ if (isset($_POST['submitDelete'])) {
                 </div>
                 <div class="col">
                     <label for="phoneEdit">Edit Phone (10 to 13 digits)</label>
-                    <input type="tel" name="phoneEdit" id="phoneEdit" class="form-control" placeholder="Edit Phone (Only numbers)" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
+                    <input value="" type="tel" name="phoneEdit" id="phoneEdit" class="form-control" placeholder="Edit Phone (Only numbers)" minlength="10" maxlength="13">
                 </div>
             </div>
             <br>
@@ -209,32 +220,29 @@ if (isset($_POST['submitDelete'])) {
                     </div>
                 </div>
             </div>
-
-
         </form>
     </fieldset>
     <fieldset class="border p-2 insert">
         <legend class="float-none w-auto p-2">Add new contact</legend>
-        <p class="global-error"><?php if (isset($globalError)) {
-                                    echo "$globalError";
-                                }
-                                if (isset($globalMessage)) {
-                                    echo "$globalMessage";
-                                }
-                                if (isset($contact->error['contactError'])) {
-                                    echo $contact->error['contactError'];
-                                }
-                                ?></p>
+
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
                     <label for="name">Full Name</label>
-                    <input type="text" name="name" id="name" class="form-control" placeholder="Full Name">
+                    <input value="<?php
+                                    if (!empty($name)) {
+                                        echo "$name";
+                                    }
+                                    ?>" type="text" name="name" id="name" class="form-control" placeholder="Full Name">
                 </div>
                 <div class="col">
                     <label for="email">Email address</label>
 
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                    <input value="<?php
+                                    if (!empty($email)) {
+                                        echo "$email";
+                                    }
+                                    ?>" type="text" name="email" id="email" class="form-control" placeholder="Email">
                 </div>
             </div>
             <br>
@@ -245,7 +253,11 @@ if (isset($_POST['submitDelete'])) {
                 </div>
                 <div class="col">
                     <label for="phone">Phone (10 to 13 digits)</label>
-                    <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
+                    <input value="<?php
+                                    if (!empty($phone)) {
+                                        echo "$phone";
+                                    }
+                                    ?>" type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)" minlength="10" maxlength="13">
                 </div>
             </div>
             <br>
@@ -260,6 +272,67 @@ if (isset($_POST['submitDelete'])) {
 
         </form>
     </fieldset>
+    <br>
+
+    <div class="container" id="message-container">
+        <?php
+        if (isset($globalError)) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>Failed to add new contact. </strong>$globalError
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($globalErrorEdit)) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>Failed to edit this contact. </strong>$globalErrorEdit
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($imageError)) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>An error occurred while uploading this file.</strong> $imageError
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($contact->error['nameError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>This name is not supported.</strong> {$contact->error['nameError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($contact->error['duplicateError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>Failed to add contact. </strong> {$contact->error['duplicateError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($contact->error['emailError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>There is a problem with this email. </strong> {$contact->error['emailError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($contact->error['phoneError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>There is a problem with this phone number. </strong> {$contact->error['phoneError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+
+        if (isset($contact->error['updateError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>There was a problem editing this contact. </strong> {$contact->error['updateError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+
+
+
+        ?>
+
+    </div>
+
+
     <table class="table align-middle mb-0 bg-white">
         <thead class="bg-light">
             <tr>
@@ -311,7 +384,8 @@ if (isset($_POST['submitDelete'])) {
 
         </tbody>
     </table>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
     <script src="./script/edit-delete.js"></script>
 </body>
 

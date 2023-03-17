@@ -15,3 +15,6 @@ fieldset{
     text-align: center;
 }
 
+#message-container{
+    width: 30%;
+}

@@ -29,16 +29,17 @@ function checkImage($image)
     //check if real image
     $check = getimagesize($image["tmp_name"]);
     if ($check !== false) {
-        echo "File is an image - " . $check["mime"] . ".";
         $uploadOk = true;
     } else {
-        echo "File is not an image.";
+        global $imageError;
+        $imageError = "File is not a real image.";
         $uploadOk = false;
         return $uploadOk;
     }
     //check size 5mb limit
     if ($image["size"] > 5242880) {
-        echo "Sorry, your file is too large. Max size = 5MB";
+        global $imageError;
+        $imageError = "Sorry, your file is too large. Max size = 5MB";
         $uploadOk = false;
         return $uploadOk;
 
@@ -47,7 +48,8 @@ function checkImage($image)
     } elseif (
         $fileType != "jpg" && $fileType != "png" && $fileType != "jpeg"
     ) {
-        echo "Sorry, only JPG, JPEG & PNG  files are allowed.";
+        global $imageError;
+        $imageError = "Only .jpeg | .jpg | .png  files are allowed.";
         $uploadOk = false;
         return $uploadOk;
     }

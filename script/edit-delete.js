@@ -1,7 +1,7 @@
 function editContact(element){
-    let inputInsert = document.querySelector('.insert').hidden = true;
-    let inputDelete = document.querySelector('.delete').hidden = true;
-    let inputEdit = document.querySelector('.edit').hidden = false;
+   document.querySelector('.insert').hidden = true;
+   document.querySelector('.delete').hidden = true;
+   document.querySelector('.edit').hidden = false;
     let nameEdit = element.getAttribute('data-name')
     let emailEdit = element.getAttribute('data-email')
     let phoneEdit = element.getAttribute('data-phone')
@@ -17,9 +17,9 @@ function editContact(element){
    }
 
 function deleteContact(element){
-    let inputInsert = document.querySelector('.insert').hidden = true;
-    let inputEdit = document.querySelector('.edit').hidden = true;
-    let inputDelete = document.querySelector('.delete').hidden = false;
+    document.querySelector('.insert').hidden = true;
+   document.querySelector('.edit').hidden = true;
+    document.querySelector('.delete').hidden = false;
     let nameDelete = element.getAttribute('data-name')
     let emailDelete = element.getAttribute('data-email')
     let phoneDelete = element.getAttribute('data-phone');

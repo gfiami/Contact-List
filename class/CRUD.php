@@ -30,5 +30,6 @@ abstract class CRUD extends DB
         $sql = "DELETE FROM $this->table WHERE id=? AND name=? AND email=? AND phone=?";
         $sql = DB::prepare($sql);
         $sql->execute(array($id, $name, $email, $phone));
+        return true;
     }
 }
