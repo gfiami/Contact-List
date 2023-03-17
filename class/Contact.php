@@ -4,6 +4,13 @@ require_once('CRUD.php');
 class Contact extends CRUD
 {
     protected string $table = 'contacts';
+    public function update($idEdited, $nameEdit, $birthEdit, $emailEdit, $phoneEdit, $photoEdit)
+    {
+        $sql = "UPDATE $this->table SET name=?, birth=?, email=?, phone=?, photo=? WHERE id=?";
+        $sql = DB::prepare($sql);
+        $sql->execute(array($nameEdit, $birthEdit, $emailEdit, $phoneEdit, $photoEdit, $idEdited));
+        return true;
+    }
     public function insert()
     {
         if ($this->emailAtDatabase() || $this->phoneAtDatabase()) {

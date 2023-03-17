@@ -5,6 +5,8 @@ abstract class CRUD extends DB
 {
     protected string $table;
     abstract public function insert();
+    abstract public function update($idEdited, $nameEdit, $birthEdit, $emailEdit, $phoneEdit, $photoEdit);
+
 
     public function find($id)
     {

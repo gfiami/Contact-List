@@ -89,7 +89,7 @@ if (
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
             </div>
             <br>
-            <div class="submitContainer"> <input name="submit" type="submit" class="btn btn-primary" value='Submit'>
+            <div class="submitContainer"> <input name="submitEdit" type="submit" class="btn btn-primary" value='Submit'>
             </div>
 
         </form>
