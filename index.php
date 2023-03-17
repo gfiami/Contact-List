@@ -6,6 +6,7 @@ $name = '';
 $birthdate = '';
 $email = '';
 $phone = '';
+$maxBirth = date("Y-m-d");
 //check isset for name, email, birth, phone, image, and not empty image
 if (
     isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
@@ -109,8 +110,7 @@ if (isset($_POST['submitDelete'])) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -190,7 +190,7 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="birthdateEdit">Edit Birthdate</label>
-                    <input type="date" max="" name="birthdateEdit" id="birthdateEdit" class="form-control" placeholder="Edit Birthdate">
+                    <input type="date" max="<?php echo $maxBirth; ?>" name="birthdateEdit" id="birthdateEdit" class="form-control" placeholder="Edit Birthdate">
                 </div>
                 <div class="col">
                     <label for="phoneEdit">Edit Phone (10 to 13 digits)</label>
@@ -247,7 +247,7 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="date">Birthdate</label>
-                    <input type="date" max="" name="birthdate" id="date" class="form-control" placeholder="Birthdate">
+                    <input type="date" max="<?php echo $maxBirth; ?>" name="birthdate" id="date" class="form-control" placeholder="Birthdate">
                 </div>
                 <div class="col">
                     <label for="phone">Phone (10 to 13 digits)</label>
