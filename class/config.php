@@ -37,7 +37,7 @@ function checkImage($image)
         return $uploadOk;
     }
     //check size 5mb limit
-    if ($image["size"] > 500000) {
+    if ($image["size"] > 5242880) {
         echo "Sorry, your file is too large. Max size = 5MB";
         $uploadOk = false;
         return $uploadOk;

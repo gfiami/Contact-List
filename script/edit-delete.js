@@ -1,5 +1,6 @@
 function editContact(element){
     let inputInsert = document.querySelector('.insert').hidden = true;
+    let inputDelete = document.querySelector('.delete').hidden = true;
     let inputEdit = document.querySelector('.edit').hidden = false;
     let nameEdit = element.getAttribute('data-name')
     let emailEdit = element.getAttribute('data-email')
@@ -11,19 +12,25 @@ function editContact(element){
     document.querySelector('#emailEdit').value = emailEdit
     document.querySelector('#phoneEdit').value = phoneEdit
     document.querySelector('#birthdateEdit').value = birthEdit
-    document.querySelector('#contact-image-file').value = photoEdit
+    document.querySelector('#contact-image-file-edit').value = photoEdit
     document.querySelector('.idEdit').value = idEdited
    }
 
 function deleteContact(element){
-    let nomeParaDeletar = element.getAttribute('data-nome')
-    let emailParaDeletar = element.getAttribute('data-email')
-    let idDeletar = element.getAttribute('data-id');
-    document.querySelector('.insert-data').style.display = 'none';
-    document.querySelector('#editar').style.display = 'none'
-    document.querySelector('#deletar').style.display = 'block'
-    document.querySelector('.nomeDelete').value = nomeParaDeletar;
-    document.querySelector('.emailDelete').value = emailParaDeletar;
-    document.querySelector('.idDelete').value = idDeletar;
-    document.querySelector('.deleteMsg').innerHTML = `Remover usuário "${nomeParaDeletar}", com email "${emailParaDeletar}"?`
+    let inputInsert = document.querySelector('.insert').hidden = true;
+    let inputEdit = document.querySelector('.edit').hidden = true;
+    let inputDelete = document.querySelector('.delete').hidden = false;
+    let nameDelete = element.getAttribute('data-name')
+    let emailDelete = element.getAttribute('data-email')
+    let phoneDelete = element.getAttribute('data-phone');
+    let photoDelete = element.getAttribute('data-photo');
+    let idDelete = element.getAttribute('data-id');
+    console.log(photoDelete)
+    //
+    document.querySelector('#nameDelete').value = nameDelete
+    document.querySelector('#emailDelete').value = emailDelete
+    document.querySelector('#phoneDelete').value = phoneDelete
+    document.querySelector('.contact-image-file-delete').src = `./contact-images/${photoDelete}`
+    document.querySelector('.idDelete').value = idDelete
+    //
 }

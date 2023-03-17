@@ -99,12 +99,60 @@ if (
 
 <body>
     <h1 class="title">Contact List</h1>
+    <fieldset hidden class="border p-2 delete">
+        <legend class="float-none w-auto p-2">Delete Contact</legend>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col">
+                    <div class='img-container-delete'>
+                        <img src='' alt='' style='width: 60px; height: 60px' class="contact-image-file-delete image-delete" class='rounded-circle' />
+                        <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file-delete" readonly>
+                    </div>
+                </div>
+                <div class="col">
+                    <label for="nameDelete">Name</label>
+                    <input readonly value=" " type="text" name="nameDelete" id="nameDelete" class="form-control">
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col">
+                    <label for="phoneDelete">Phone</label>
+                    <input readonly type="tel" name="phoneDelete" id="phoneDelete" class="form-control" minlength="10" maxlength="13" pattern="[0-9]{10,13}">
+                </div>
+                <div class="col">
+                    <label for="emailDelete">Email</label>
+                    <input readonly type="email" name="emailDelete" id="emailDelete" class="form-control">
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="submitContainer"> <input name="submitDelete" type="submit" class="btn btn-danger" value='Delete Contact'></div>
+
+                </div>
+                <div class="col">
+                    <div class="submitContainer"> <input name="cancelDelete" type="submit" class="btn btn-secondary" value='Cancel'>
+
+                    </div>
+                </div>
+                <br>
+                <input hidden type='number' class='idDelete' value='' name='idDelete' readonly>
+
+            </div>
+
+
+
+        </form>
+    </fieldset>
     <fieldset hidden class="border p-2 edit">
         <legend class="float-none w-auto p-2">Edit Contact Infos</legend>
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
-                    <label for="nameEdit">Edti Full Name</label>
+                    <label for="nameEdit">Edit Full Name</label>
                     <input value=" " type="text" name="nameEdit" id="nameEdit" class="form-control" placeholder="Edit Full Name">
                 </div>
                 <div class="col">
@@ -127,14 +175,24 @@ if (
             <div class=" form-group">
                 <label for="contact-image-edit">Edit Contact image</label> <br>
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
-                <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file" readonly>
+                <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file-edit" readonly>
 
             </div>
             <br>
             <input hidden type='number' class='idEdit' value='' name='idEdit' readonly>
-
-            <div class="submitContainer"> <input name="submitEdit" type="submit" class="btn btn-primary" value='Submit'>
+            <div class="row">
+                <div class="col">
+                    <div class="submitContainer">
+                        <input name="submitEdit" type="submit" class="btn btn-success" value='Confirm Edit'>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="submitContainer">
+                        <input name="cancelEdit" type="submit" class="btn btn-secondary" value='Cancel'>
+                    </div>
+                </div>
             </div>
+
 
         </form>
     </fieldset>
@@ -219,10 +277,10 @@ if (
                         </td>
                         <td>{$ctt['phone']}</td>
                         <td>
-                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-primary btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
                                 Edit
                             </button>
-                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-warning btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
                                 Delete
                             </button>
                         </td>
