@@ -1,7 +1,7 @@
 <?php
 require_once('class/config.php');
 require_once('autoload.php');
-$loadPage = new Load();
+$contact = new Contact();
 //check isset for name, email, birth, phone, image, and not empty image
 if (
     isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
@@ -26,7 +26,7 @@ if (
             $globalError = "There is a problem with this file";
         }
         if ($uploadOk) {
-            $contact = new Contact($name, $birthdate, $email, $phone, $imgName);
+            $contact->setContactInfo($name, $birthdate, $email, $phone, $imgName);
             if ($contact->insert()) {
                 move_uploaded_file($tmp, "contact-images/$imgName");
                 $globalMessage = "Success!";
@@ -66,10 +66,12 @@ if (
         }
         if ($uploadOk) {
             $idEdit = $_POST['idEdit'];
-            $loadPage->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
-            if ($loadPage->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
+            $contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
+            if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
                 move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit");
                 $globalMessage = "Success Editing!";
+            } else {
+                $globalMessage = $contact->error['updateError'];
             }
         }
     }
@@ -193,8 +195,8 @@ if (
         </thead>
         <tbody>
             <?php
-            if (isset($loadPage)) {
-                $loading = $loadPage->findAll();
+            if (isset($contact)) {
+                $loading = $contact->findAll();
                 if (count($loading) > 0) {
                     foreach ($loading as $ctt) {
                         echo "<tr>
