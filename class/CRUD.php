@@ -25,10 +25,10 @@ abstract class CRUD extends DB
         return $value;
     }
 
-    public function delete($id)
+    public function delete($id, $name, $email, $phone)
     {
-        $sql = "DELETE FROM $this->table WHERE id=?";
+        $sql = "DELETE FROM $this->table WHERE id=? AND name=? AND email=? AND phone=?";
         $sql = DB::prepare($sql);
-        return $sql->execute(array($id));
+        $sql->execute(array($id, $name, $email, $phone));
     }
 }

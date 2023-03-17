@@ -25,11 +25,11 @@ function deleteContact(element){
     let phoneDelete = element.getAttribute('data-phone');
     let photoDelete = element.getAttribute('data-photo');
     let idDelete = element.getAttribute('data-id');
-    console.log(photoDelete)
-    //
+    console.log(idDelete);
     document.querySelector('#nameDelete').value = nameDelete
     document.querySelector('#emailDelete').value = emailDelete
     document.querySelector('#phoneDelete').value = phoneDelete
+    document.querySelector('#contact-image-file-delete').value = photoDelete
     document.querySelector('.contact-image-file-delete').src = `./contact-images/${photoDelete}`
     document.querySelector('.idDelete').value = idDelete
     //

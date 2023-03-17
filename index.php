@@ -67,7 +67,7 @@ if (
             $idEdit = $_POST['idEdit'];
             $contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit);
             if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
-                unlink("contact-images/" . $_POST['photoFile']);
+                unlink("contact-images/" . $_POST['photoFileEdit']);
                 move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit");
                 $globalMessage = "Success Editing!";
             } else {
@@ -79,6 +79,23 @@ if (
     //user submit with empty fields
     if (isset($_POST['submitEdit'])) {
         $globalError = "All fields are required";
+    }
+}
+
+//delete portions
+if (isset($_POST['submitDelete'])) {
+    $nameDelete = clearInputs($_POST['nameDelete']);
+    $emailDelete = clearInputs($_POST['emailDelete']);
+    $phoneDelete = clearInputs($_POST['phoneDelete']);
+    $idDelete = clearInputs($_POST['idDelete']);
+    if (empty($nameDelete) || empty($emailDelete) || empty($phoneDelete) || empty($idDelete)) {
+        echo $nameDelete, $emailDelete, $phoneDelete, $idDelete;
+        $globalError = "All fields are required to delete";
+    } else {
+        if ($contact->delete($idDelete, $nameDelete, $emailDelete, $phoneDelete)) {
+            unlink("contact-images/" . $_POST['photoFileDelete']);
+            $globalMessage = "Contact deleted.";
+        }
     }
 }
 ?>
@@ -106,7 +123,7 @@ if (
                 <div class="col">
                     <div class='img-container-delete'>
                         <img src='' alt='' style='width: 60px; height: 60px' class="contact-image-file-delete image-delete" class='rounded-circle' />
-                        <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file-delete" readonly>
+                        <input hidden type='text' class='photoFile' value='' name='photoFileDelete' id="contact-image-file-delete" readonly>
                     </div>
                 </div>
                 <div class="col">
@@ -126,6 +143,7 @@ if (
                     <input readonly type="email" name="emailDelete" id="emailDelete" class="form-control">
                 </div>
             </div>
+            <input hidden type='number' class='idDelete' value='' name='idDelete' readonly>
 
             <br>
             <div class="row">
@@ -139,7 +157,6 @@ if (
                     </div>
                 </div>
                 <br>
-                <input hidden type='number' class='idDelete' value='' name='idDelete' readonly>
 
             </div>
 
@@ -175,7 +192,7 @@ if (
             <div class=" form-group">
                 <label for="contact-image-edit">Edit Contact image</label> <br>
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
-                <input hidden type='text' class='photoFile' value='' name='photoFile' id="contact-image-file-edit" readonly>
+                <input hidden type='text' class='photoFile' value='' name='photoFileEdit' id="contact-image-file-edit" readonly>
 
             </div>
             <br>
@@ -280,7 +297,7 @@ if (
                             <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-primary btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
                                 Edit
                             </button>
-                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-warning btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-warning btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
                                 Delete
                             </button>
                         </td>
