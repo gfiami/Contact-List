@@ -18,8 +18,8 @@ abstract class CRUD extends DB
     {
         $sql = "SELECT *FROM $this->table";
         $sql = DB::prepare($sql);
-        $sql->execute(array()); //check this
-        $value = $sql->fetchAll();
+        $sql->execute(array());
+        $value = $sql->fetchAll(PDO::FETCH_ASSOC);
         return $value;
     }
 

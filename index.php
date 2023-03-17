@@ -1,7 +1,7 @@
 <?php
 require_once('class/config.php');
 require_once('autoload.php');
-
+$loadPage = new Load();
 //check isset for name, email, birth, phone, image, and not empty image
 if (
     isset($_POST['name']) && isset($_POST['email']) && isset($_POST['birthdate']) && isset($_POST['phone']) && isset($_POST['submit']) && !($_FILES['contact-image']['error'] == 4 || ($_FILES['contact-image']['size'] == 0 && $_FILES['contact-image']['error'] == 0))
@@ -116,82 +116,44 @@ if (
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" alt="" style="width: 45px; height: 45px" class="rounded-circle" />
-                        <div class="ms-3">
-                            <p class="fw-bold mb-1">John Doe</p>
-                        </div>
-                    </div>
-                </td>
+            <?php
+            if (isset($loadPage)) {
+                $loading = $loadPage->findAll();
+                if (count($loading) > 0) {
+                    foreach ($loading as $ctt) {
+                        echo "<tr>
+                        <td>
+                            <div class='d-flex align-items-center'>
+                                <img src='./contact-images/{$ctt['photo']}' alt='' style='width: 45px; height: 45px' class='rounded-circle' />
+                                <div class='ms-3'>
+                                    <p class='fw-bold mb-1'>{$ctt['name']}</p>
+                                </div>
+                            </div>
+                        </td>
+        
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['birth']}</p>
+                        </td>
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['email']}</p>
+                        </td>
+                        <td>{$ctt['phone']}</td>
+                        <td>
+                            <button type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                                Edit
+                            </button>
+                            <button type='button' class='btn btn-link btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>";
+                    }
+                }
+            }
 
-                <td>
-                    <p class="fw-normal mb-1">01/01/1000</p>
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">teste@gmail.com</p>
-                </td>
-                <td>(21)111111111</td>
-                <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
-                        Edit
-                    </button>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="https://mdbootstrap.com/img/new/avatars/6.jpg" class="rounded-circle" alt="" style="width: 45px; height: 45px" />
-                        <div class="ms-3">
-                            <p class="fw-bold mb-1">Kate Hunington</p>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">20/01/1990</p>
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">teste@gmail.com</p>
-                </td>
-                <td>(21)111111111</td>
-                <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
-                        Edit
-                    </button>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="https://mdbootstrap.com/img/new/avatars/7.jpg" class="rounded-circle" alt="" style="width: 45px; height: 45px" />
-                        <div class="ms-3">
-                            <p class="fw-bold mb-1">Kate Hunington</p>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">01/01/0111</p>
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">teste@gmail.com</p>
-                </td>
-                <td>(21)111111111</td>
-                <td>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="light">
-                        Edit
-                    </button>
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
-                        Delete
-                    </button>
-                </td>
-            </tr>
+            ?>
+
+
         </tbody>
     </table>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
