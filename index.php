@@ -33,7 +33,7 @@ if (
             if (isset($nameOkay) && isset($emailOkay) && isset($phoneOkay)) {
                 if ($contact->insert()) {
                     move_uploaded_file($tmp, "contact-images/$imgName");
-                    $globalMessage = "New contact added!";
+                    $globalSuccess = "New contact added!";
                 }
             }
         }
@@ -75,10 +75,9 @@ if (
                 if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
                     unlink("contact-images/" . $_POST['photoFileEdit']);
                     move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit"); //saving image
-                    $globalMessageEdit = "Success Editing!";
+                    $globalSuccess = "Success Editing!";
                 } else {
                     $globalErrorEdit = "";
-                    $globalMessageEdit = $contact->error['updateError'];
                 }
             } else {
                 $globalErrorEdit = "";
@@ -94,7 +93,6 @@ if (
 
 //delete portions
 if (isset($_POST['submitDelete'])) {
-    echo "$_POST[photoFileDelete]";
     $nameDelete = clearInputs($_POST['nameDelete']);
     $emailDelete = clearInputs($_POST['emailDelete']);
     $phoneDelete = clearInputs($_POST['phoneDelete']);
@@ -105,7 +103,7 @@ if (isset($_POST['submitDelete'])) {
     } else {
         if ($contact->delete($idDelete, $nameDelete, $emailDelete, $phoneDelete)) {
             unlink("contact-images/" . $_POST['photoFileDelete']);
-            $globalMessage = "Contact deleted.";
+            $globalSuccess = "Contact removed!";
         }
     }
 }
@@ -325,14 +323,15 @@ if (isset($_POST['submitDelete'])) {
             <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
         </div>";
         }
-
-
-
+        if (isset($globalSuccess)) {
+            echo "<div class='alert alert-success alert-dismissible fade show text-center' role='alert'>
+            <strong>$globalSuccess</strong>
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
         ?>
 
     </div>
-
-
     <table class="table align-middle mb-0 bg-white">
         <thead class="bg-light">
             <tr>
