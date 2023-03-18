@@ -16,7 +16,6 @@ if (
     $birthdate = clearInputs($_POST['birthdate']);
     $email = clearInputs($_POST['email']);
     $phone = clearInputs($_POST['phone']);
-
     //check if fields are empty
     if (empty($name) || empty($email) || empty($birthdate) || empty($phone)) {
         $globalError = "All fields are required.";
@@ -31,7 +30,7 @@ if (
         if ($uploadOk) {
             $contact->setContactInfo($name, $birthdate, $email, $phone, $imgName);
             $contact->validateInfoInsert();
-            if (isset($nameOkay) && isset($emailOkay) && isset($phoneOkay)) {
+            if (isset($nameOkay) && isset($emailOkay) && isset($phoneOkay) && isset($birthOkay)) {
                 if ($contact->insert()) {
                     move_uploaded_file($tmp, "contact-images/$imgName");
                     $globalSuccess = "New contact added!";
@@ -48,34 +47,61 @@ if (
 
 
 ///EDIT PORTIONS \/
+// validate image set
+if (isset($_POST['editImage'])) {
+    $imageOption = clearInputs($_POST['editImage'][0]);
+}
+
 if (
-    isset($_POST['nameEdit']) && isset($_POST['emailEdit']) && isset($_POST['birthdateEdit']) && isset($_POST['phoneEdit']) && isset($_POST['submitEdit']) && !($_FILES['contact-image-edit']['error'] == 4 || ($_FILES['contact-image-edit']['size'] == 0 && $_FILES['contact-image-edit']['error'] == 0))
+    isset($_POST['nameEdit']) && isset($_POST['emailEdit']) && isset($_POST['birthdateEdit']) && isset($_POST['phoneEdit']) && isset($_POST['submitEdit'])
 ) {
     //anti inject
     $nameEdit = clearInputs($_POST['nameEdit']);
     $birthdateEdit = clearInputs($_POST['birthdateEdit']);
     $emailEdit = clearInputs($_POST['emailEdit']);
     $phoneEdit = clearInputs($_POST['phoneEdit']);
-
     //check if fields are empty
     if (empty($nameEdit) || empty($emailEdit) || empty($birthdateEdit) || empty($phoneEdit)) {
         $globalErrorEdit = "All fields are required to edit.";
     } else {
-        //validate image 
-        if (checkImage($_FILES['contact-image-edit'])) {
-            $formatEdit = pathinfo($_FILES['contact-image-edit']['name'], PATHINFO_EXTENSION);
-            $imgNameEdit = uniqid() . ".$formatEdit";
-            $tmpEdit = $_FILES['contact-image-edit']['tmp_name'];
-        } else {
-            $globalErrorEdit = "There is a problem with this file.";
+        //validate image if option is to CHANGE image
+        if ($imageOption == 'change') {
+            if (!($_FILES['contact-image-edit']['error'] == 4 || ($_FILES['contact-image-edit']['size'] == 0 && $_FILES['contact-image-edit']['error'] == 0))) {
+                if (checkImage($_FILES['contact-image-edit'])) {
+                    $formatEdit = pathinfo($_FILES['contact-image-edit']['name'], PATHINFO_EXTENSION);
+                    $imgNameEdit = uniqid() . ".$formatEdit";
+                    $tmpEdit = $_FILES['contact-image-edit']['tmp_name'];
+                } else {
+                    $globalErrorEdit = "There is a problem with this file.";
+                }
+
+                if ($uploadOk) {
+                    $contact->validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit, $birthdateEdit);
+                    if (isset($nameOkayEdit) && isset($emailOkayEdit) && isset($phoneOkayEdit) && isset($birthOkayEdit)) {
+                        $idEdit = $_POST['idEdit'];
+                        if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
+                            unlink("contact-images/" . $_POST['photoFileEdit']);
+                            move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit"); //saving image
+                            $globalSuccess = "Success Editing!";
+                        } else {
+                            $globalErrorEdit = "";
+                        }
+                    } else {
+                        $globalErrorEdit = "";
+                    }
+                }
+                //user submit with empty fields
+            } elseif (isset($_POST['submitEdit'])) {
+                $globalErrorEdit = "To change this contact image, please select an image.";
+            }
         }
-        if ($uploadOk) {
-            $contact->validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit);
-            if (isset($nameOkayEdit) && isset($emailOkayEdit) && isset($phoneOkayEdit)) {
+        //validations if image to keep
+        if ($imageOption == 'keep') {
+            $imageKeep = $_POST['photoFileEdit'];
+            $contact->validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit, $birthdateEdit);
+            if (isset($nameOkayEdit) && isset($emailOkayEdit) && isset($phoneOkayEdit) && isset($birthOkayEdit)) {
                 $idEdit = $_POST['idEdit'];
-                if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imgNameEdit)) {
-                    unlink("contact-images/" . $_POST['photoFileEdit']);
-                    move_uploaded_file($tmpEdit, "contact-images/$imgNameEdit"); //saving image
+                if ($contact->update($idEdit, $nameEdit, $birthdateEdit, $emailEdit, $phoneEdit, $imageKeep)) {
                     $globalSuccess = "Success Editing!";
                 } else {
                     $globalErrorEdit = "";
@@ -85,12 +111,11 @@ if (
             }
         }
     }
-} else {
     //user submit with empty fields
-    if (isset($_POST['submitEdit'])) {
-        $globalErrorEdit = "All fields are required to edit.";
-    }
+} elseif (isset($_POST['submitEdit'])) {
+    $globalErrorEdit = "All fields are required to edit.";
 }
+
 
 //delete portions
 if (isset($_POST['submitDelete'])) {
@@ -130,8 +155,8 @@ if (isset($_POST['submitDelete'])) {
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col">
-                    <div class='img-container-delete'>
-                        <img src='' alt='' style='width: 60px; height: 60px' class="contact-image-file-delete image-delete" class='rounded-circle' />
+                    <div class='container text-center'>
+                        <img src='' alt='' style='width: 60px; height: 60px' class="contact-image-file-delete image-delete rounded-circle" />
                         <input hidden type='text' class='photoFile' value='' name='photoFileDelete' id="contact-image-file-delete" readonly>
                     </div>
                 </div>
@@ -190,19 +215,27 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="birthdateEdit">Edit Birthdate</label>
-                    <input type="date" max="<?php echo $maxBirth; ?>" name="birthdateEdit" id="birthdateEdit" class="form-control" placeholder="Edit Birthdate">
+                    <input type="date" max="<?php //echo $maxBirth; 
+                                            ?>" name="birthdateEdit" id="birthdateEdit" class="form-control" placeholder="Edit Birthdate">
                 </div>
                 <div class="col">
                     <label for="phoneEdit">Edit Phone (10 to 13 digits)</label>
-                    <input value="" type="tel" name="phoneEdit" id="phoneEdit" class="form-control" placeholder="Edit Phone (Only numbers)" minlength="10" maxlength="13">
+                    <input value="" type="tel" name="phoneEdit" id="phoneEdit" class="form-control" placeholder="Edit Phone (Only numbers)">
                 </div>
             </div>
             <br>
-            <div class=" form-group">
+            <div class=" form-group text-center">
                 <label for="contact-image-edit">Edit Contact image</label> <br>
+                <img src='' alt='' style='width: 60px; height: 60px' class="contact-image-file-edit image-edit rounded-circle" />
+                <br> <br>
                 <input type="file" name="contact-image-edit" class="form-control-file" id="contact-image-edit">
                 <input hidden type='text' class='photoFile' value='' name='photoFileEdit' id="contact-image-file-edit" readonly>
+                <br><br>
+                <input type="radio" class="btn-check" value='keep' name="editImage[]" id="keepImage" autocomplete="off" checked>
+                <label class="btn btn-outline-info" for="keepImage">Keep same image</label>
 
+                <input type="radio" class="btn-check" value='change' name="editImage[]" id="changeImage" autocomplete="off">
+                <label class="btn btn-outline-info" for="changeImage">Change contact image</label>
             </div>
             <br>
             <input hidden type='number' class='idEdit' value='' name='idEdit' readonly>
@@ -247,7 +280,12 @@ if (isset($_POST['submitDelete'])) {
             <div class="row">
                 <div class="col">
                     <label for="date">Birthdate</label>
-                    <input type="date" max="<?php echo $maxBirth; ?>" name="birthdate" id="date" class="form-control" placeholder="Birthdate">
+                    <input type="date" value="<?php
+                                                if (!empty($birthdate)) {
+                                                    echo "$birthdate";
+                                                }
+                                                ?>" max="<?php //echo $maxBirth; 
+                                                            ?>" name="birthdate" id="date" class="form-control" placeholder="Birthdate">
                 </div>
                 <div class="col">
                     <label for="phone">Phone (10 to 13 digits)</label>
@@ -255,7 +293,7 @@ if (isset($_POST['submitDelete'])) {
                                     if (!empty($phone)) {
                                         echo "$phone";
                                     }
-                                    ?>" type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)" minlength="10" maxlength="13">
+                                    ?>" type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)">
                 </div>
             </div>
             <br>
@@ -313,6 +351,12 @@ if (isset($_POST['submitDelete'])) {
         if (isset($contact->error['phoneError'])) {
             echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
             <strong>There is a problem with this phone number. </strong> {$contact->error['phoneError']}
+            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+        }
+        if (isset($contact->error['birthError'])) {
+            echo "<div class='alert alert-warning alert-dismissible fade show text-center' role='alert'>
+            <strong>Invalid birthdate. </strong> {$contact->error['birthError']}
             <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
         </div>";
         }

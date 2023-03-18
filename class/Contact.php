@@ -125,14 +125,25 @@ class Contact extends CRUD
             $emailOkay = true;
             //return true;
         }
-        if (!preg_match("/[0-9]{10,13}/", $this->phone)) {
-            $this->error['phoneError'] = "Please use a valid number, including DDD and IDD. Digits[0-9] only.";
+        if (!preg_match("/^[0-9]{10,13}$/", $this->phone)) {
+            $this->error['phoneError'] = "Please use a valid number, including DDD and IDD. Min 10 | Max 13 - Digits[0-9] only.";
         } else {
             global $phoneOkay;
             $phoneOkay = true;
         }
+        if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $this->birth)) {
+            $this->error['birthError'] = "Please use a valid date formate.";
+        } else {
+            $maxBirth = date("Y-m-d");
+            if ($this->birth > $maxBirth) {
+                $this->error['birthError'] = "Contact cannot have birthdate in the future. Unless... Time traveller?";
+            } else {
+                global $birthOkay;
+                $birthOkay = true;
+            }
+        }
     }
-    function validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit)
+    function validateInfoUpdate($nameEdit, $emailEdit, $phoneEdit, $birthdateEdit)
     {
         if (!preg_match("/^([a-zA-Z' ]+)$/", $nameEdit)) {
             $this->error['nameError'] = "Special characters aren't allowed for names.";
@@ -149,11 +160,22 @@ class Contact extends CRUD
             $emailOkayEdit = true;
             //return true;
         }
-        if (!preg_match("/[0-9]{10,13}/", $phoneEdit)) {
+        if (!preg_match("/^[0-9]{10,13}$/", $phoneEdit)) {
             $this->error['phoneError'] = "Please use a valid number, including DDD and IDD. Digits[0-9] only.";
         } else {
             global $phoneOkayEdit;
             $phoneOkayEdit = true;
+        }
+        if (!preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $birthdateEdit)) {
+            $this->error['birthError'] = "Please use a valid date formate.";
+        } else {
+            $maxBirth = date("Y-m-d");
+            if ($birthdateEdit > $maxBirth) {
+                $this->error['birthError'] = "Contact cannot have birthdate in the future. Unless... Time traveller?";
+            } else {
+                global $birthOkayEdit;
+                $birthOkayEdit = true;
+            }
         }
     }
     function __construct(

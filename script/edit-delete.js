@@ -13,6 +13,8 @@ function editContact(element){
     document.querySelector('#phoneEdit').value = phoneEdit
     document.querySelector('#birthdateEdit').value = birthEdit
     document.querySelector('#contact-image-file-edit').value = photoEdit
+    document.querySelector('.contact-image-file-edit').src = `./contact-images/${photoEdit}`
+
     document.querySelector('.idEdit').value = idEdited
    }
 
@@ -25,7 +27,6 @@ function deleteContact(element){
     let phoneDelete = element.getAttribute('data-phone');
     let photoDelete = element.getAttribute('data-photo');
     let idDelete = element.getAttribute('data-id');
-    console.log(idDelete);
     document.querySelector('#nameDelete').value = nameDelete
     document.querySelector('#emailDelete').value = emailDelete
     document.querySelector('#phoneDelete').value = phoneDelete
@@ -34,3 +35,16 @@ function deleteContact(element){
     document.querySelector('.idDelete').value = idDelete
     //
 }
+const imageEdit = document.querySelector('.image-edit');
+const keepImage = document.querySelector('#keepImage')
+const changeImage = document.querySelector('#changeImage')
+const imageInput = document.querySelector('#contact-image-edit')
+imageInput.disabled = true;
+keepImage.addEventListener('click', ()=> {
+    imageInput.disabled = true;
+    imageEdit.style.opacity = "1"
+})
+changeImage.addEventListener('click', ()=>{
+    imageInput.disabled = false;
+    imageEdit.style.opacity = "0.4";
+})
