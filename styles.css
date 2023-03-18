@@ -18,3 +18,10 @@ fieldset{
 #message-container{
     width: 30%;
 }
+
+.orderList{
+    width: 50%;
+}
+.form-select{
+    width: 20%;
+}

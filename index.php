@@ -376,11 +376,32 @@ if (isset($_POST['submitDelete'])) {
         ?>
 
     </div>
+    <div class="orderList container">
+        <form method='post' class='d-flex justify-content-md-center align-items-center'>
+            <label for="orderList">Order by&nbsp; &nbsp; </label>
+            <select class="form-select form-select-sm" name="orderList" aria-label=".form-select-sm example">
+                <option value="name">Name</option>
+                <option value="birth">Birthdate</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
+            </select> &nbsp; &nbsp;
+            <div class="form-check form-check-inline">
+                <input checked class="form-check-input" type="radio" name="orderDirection[]" id="ascRadio" value="ASC">
+                <label class="form-check-label" for="ascRadio">Asc</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="orderDirection[]" id="descRadio" value="DESC">
+                <label class="form-check-label" for="descRadio">Desc</label>
+            </div>
+            <input type="submit" value="Apply">
+        </form>
+    </div>
+
     <table class="table align-middle mb-0 bg-white">
         <thead class="bg-light">
             <tr>
                 <th>Name</th>
-                <th>Birthdate</th>
+                <th>Birthdate(Y-M-D)</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Actions</th>
@@ -389,10 +410,13 @@ if (isset($_POST['submitDelete'])) {
         <tbody>
             <?php
             if (isset($contact)) {
-                $loading = $contact->findAll();
-                if (count($loading) > 0) {
-                    foreach ($loading as $ctt) {
-                        echo "<tr>
+                if (isset($_POST['orderList']) && isset($_POST['orderDirection'])) {
+                    $direction = $_POST['orderDirection'][0];
+                    $order = $_POST['orderList'];
+                    $loading = $contact->orderBy($order, $direction);
+                    if (count($loading) > 0) {
+                        foreach ($loading as $ctt) {
+                            echo "<tr>
                         <td>
                             <div class='d-flex align-items-center'>
                                 <img src='./contact-images/{$ctt['photo']}' alt='' style='width: 45px; height: 45px' class='rounded-circle' />
@@ -418,6 +442,39 @@ if (isset($_POST['submitDelete'])) {
                             </button>
                         </td>
                     </tr>";
+                        }
+                    }
+                } else {
+                    $loading = $contact->orderBy("name", "ASC");
+                    if (count($loading) > 0) {
+                        foreach ($loading as $ctt) {
+                            echo "<tr>
+                        <td>
+                            <div class='d-flex align-items-center'>
+                                <img src='./contact-images/{$ctt['photo']}' alt='' style='width: 45px; height: 45px' class='rounded-circle' />
+                                <div class='ms-3'>
+                                    <p class='fw-bold mb-1'>{$ctt['name']}</p>
+                                </div>
+                            </div>
+                        </td>
+        
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['birth']}</p>
+                        </td>
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['email']}</p>
+                        </td>
+                        <td>{$ctt['phone']}</td>
+                        <td>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-primary btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                                Edit
+                            </button>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-warning btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>";
+                        }
                     }
                 }
             }

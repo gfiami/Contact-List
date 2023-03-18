@@ -32,4 +32,13 @@ abstract class CRUD extends DB
         $sql->execute(array($id, $name, $email, $phone));
         return true;
     }
+
+    public function orderBy($category, $direction)
+    {
+        $sql = "SELECT * FROM $this->table ORDER BY $category $direction";
+        $sql = DB::prepare($sql);
+        $sql->execute(array());
+        $value = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $value;
+    }
 }
