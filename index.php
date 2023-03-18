@@ -261,7 +261,7 @@ if (isset($_POST['submitDelete'])) {
                 <div class="col">
                     <label for="name">Full Name</label>
                     <input value="<?php
-                                    if (!empty($name)) {
+                                    if (!empty($name) && !isset($globalSuccess)) {
                                         echo "$name";
                                     }
                                     ?>" type="text" name="name" id="name" class="form-control" placeholder="Full Name">
@@ -270,7 +270,7 @@ if (isset($_POST['submitDelete'])) {
                     <label for="email">Email address</label>
 
                     <input value="<?php
-                                    if (!empty($email)) {
+                                    if (!empty($email) && !isset($globalSuccess)) {
                                         echo "$email";
                                     }
                                     ?>" type="text" name="email" id="email" class="form-control" placeholder="Email">
@@ -281,7 +281,7 @@ if (isset($_POST['submitDelete'])) {
                 <div class="col">
                     <label for="date">Birthdate</label>
                     <input type="date" value="<?php
-                                                if (!empty($birthdate)) {
+                                                if (!empty($birthdate) && !isset($globalSuccess)) {
                                                     echo "$birthdate";
                                                 }
                                                 ?>" max="<?php //echo $maxBirth; 
@@ -290,7 +290,7 @@ if (isset($_POST['submitDelete'])) {
                 <div class="col">
                     <label for="phone">Phone (10 to 13 digits)</label>
                     <input value="<?php
-                                    if (!empty($phone)) {
+                                    if (!empty($phone) && !isset($globalSuccess)) {
                                         echo "$phone";
                                     }
                                     ?>" type="tel" name="phone" id="phone" class="form-control" placeholder="Phone (Only numbers)">
