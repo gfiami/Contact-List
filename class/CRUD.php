@@ -44,7 +44,7 @@ abstract class CRUD extends DB
     public function search($search, $column, $category, $direction){
         $sql = "SELECT * FROM $this->table WHERE $column LIKE '%{$search}%' ORDER BY $category $direction";
         $sql = DB::prepare($sql);
-        $sql->execute(array($search));
+        $sql->execute(array());
         $valueSearch = $sql->fetchAll(PDO::FETCH_ASSOC);
         return $valueSearch;
 

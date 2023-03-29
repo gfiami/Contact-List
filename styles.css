@@ -19,9 +19,17 @@ fieldset{
     width: 30%;
 }
 
-.orderList, .search{
+.orderList, .orderListSearch {
     width: 50%;
 }
 .form-select, #search{
     width: 20%;
+}
+
+.search{
+    width: 70%;
+}
+
+#search-select, #search-select-column{
+    width: 10%;
 }

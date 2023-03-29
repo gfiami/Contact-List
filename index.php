@@ -386,7 +386,7 @@ if (isset($_POST['submitDelete'])) {
                     ?>
         <form method='post' class='d-flex justify-content-md-center align-items-center'>
             <label for="orderList">Order by&nbsp; &nbsp; </label>
-            <select class="form-select form-select-sm" name="orderList" aria-label=".form-select-sm example">
+            <select class="form-select form-select-sm" id="select-search" name="orderList" aria-label=".form-select-sm example">
                 <option <?php if(isset($categoryOrder)){
                     if($categoryOrder == 'name'){
                         echo "selected";
@@ -440,32 +440,62 @@ if (isset($_POST['submitDelete'])) {
             $categoryOrderSearch = $_POST['orderListSearch'];
             }}
     ?>
-        <form method="POST" class='d-flex justify-content-md-center align-items-center'>
-            <label for="search">Search contact</label>&nbsp; &nbsp;
-            <input type="text" name="search" id="search" class="form-control">&nbsp; by &nbsp;
-            <select class="form-select form-select-sm" name="orderListSearch" aria-label=".form-select-sm example">
-                <option <?php if(isset($categoryOrderSearch)){
-                    if($categoryOrderSearch == 'nameSearch'){
-                        echo "selected";
-                    }
-                } ?> value="nameSearch">Name</option>
-                <option <?php if(isset($categoryOrderSearch)){
-                    if($categoryOrderSearch == 'birthSearch'){
-                        echo "selected";
-                    }
-                } ?> value="birthSearch">Birthdate</option>
-                <option <?php if(isset($categoryOrderSearch)){
-                    if($categoryOrderSearch == 'emailSearch'){
-                        echo "selected";
-                    }
-                } ?> value="emailSearch">Email</option>
-                <option <?php if(isset($categoryOrderSearch)){
-                    if($categoryOrderSearch == 'phoneSearch'){
-                        echo "selected";
-                    }
-                } ?> value="phoneSearch">Phone</option>
     
-            </select> &nbsp; &nbsp;
+        <form method="POST" class='d-flex justify-content-md-center align-items-center'>
+            <label  for="search">Search contact</label>&nbsp; &nbsp;
+            <input <?php 
+            if(isset($_POST['search'])){
+                echo "value='{$_POST["search"]}'";
+            } else{
+                echo "triste";
+            }
+                ?> type="text" name="search" id="search" class="form-control">&nbsp; by &nbsp;
+            <select class="form-select form-select-sm" id="search-select-column" name="columnSearch" aria-label=".form-select-sm example">
+                <option <?php if(isset($columnSearch)){
+                    if($columnSearch == 'name'){
+                        echo "selected";
+                    }
+                } ?> value="name">Name</option>
+                <option <?php if(isset($columnSearch)){
+                    if($columnSearch == 'birth'){
+                        echo "selected";
+                    }
+                } ?> value="birth">Birthdate</option>
+                <option <?php if(isset($columnSearch)){
+                    if($columnSearch == 'email'){
+                        echo "selected";
+                    }
+                } ?> value="email">Email</option>
+                <option <?php if(isset($columnSearch)){
+                    if($columnSearch == 'phone'){
+                        echo "selected";
+                    }
+                } ?> value="phone">Phone</option>
+    
+            </select> &nbsp;&nbsp;ording by&nbsp; &nbsp;
+            <select class="form-select form-select-sm" id="search-select" name="orderListSearch" aria-label=".form-select-sm example">
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'name'){
+                        echo "selected";
+                    }
+                } ?> value="name">Name</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'birth'){
+                        echo "selected";
+                    }
+                } ?> value="birth">Birthdate</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'email'){
+                        echo "selected";
+                    }
+                } ?> value="email">Email</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'phone'){
+                        echo "selected";
+                    }
+                } ?> value="phone">Phone</option>
+    
+            </select>&nbsp; &nbsp;
             <div class="form-check form-check-inline">
                 <input 
                 <?php 
@@ -544,7 +574,43 @@ if (isset($_POST['submitDelete'])) {
                     </tr>";
                         }
                     }
-                } else {
+                } elseif (isset($_POST['orderListSearch']) && isset($_POST['orderDirectionSearch'])) {
+                    $directionSearch = $_POST['orderDirectionSearch'][0];
+                    $columnSearch = $_POST['columnSearch'];
+                    $categoryOrderSearch = $_POST['orderListSearch'];
+                    $searchText = clearInputs($_POST['search']);
+                    $loading = $contact->search($searchText, $columnSearch, $categoryOrderSearch, $directionSearch);
+                    if (count($loading) > 0) {
+                        foreach ($loading as $ctt) {
+                            echo "<tr>
+                        <td>
+                            <div class='d-flex align-items-center'>
+                                <img src='./contact-images/{$ctt['photo']}' alt='' style='width: 45px; height: 45px' class='rounded-circle' />
+                                <div class='ms-3'>
+                                    <p class='fw-bold mb-1'>{$ctt['name']}</p>
+                                </div>
+                            </div>
+                        </td>
+        
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['birth']}</p>
+                        </td>
+                        <td>
+                            <p class='fw-normal mb-1'>{$ctt['email']}</p>
+                        </td>
+                        <td>{$ctt['phone']}</td>
+                        <td>
+                            <button onclick='editContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}' type='button' class='btn btn-primary btn-rounded btn-sm fw-bold' data-mdb-ripple-color='light'>
+                                Edit
+                            </button>
+                            <button onclick='deleteContact(this)' data-birth='{$ctt['birth']}' data-photo='{$ctt['photo']}' data-id='{$ctt['id']}' data-name='{$ctt['name']}' data-email='{$ctt['email']}' data-phone='{$ctt['phone']}'type='button' class='btn btn-warning btn-rounded btn-sm fw-bold' data-mdb-ripple-color='dark'>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>";
+                        }
+                    }
+                } else{
                     $loading = $contact->orderBy("name", "ASC");
                     if (count($loading) > 0) {
                         foreach ($loading as $ctt) {
