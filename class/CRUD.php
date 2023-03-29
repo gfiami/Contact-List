@@ -33,12 +33,20 @@ abstract class CRUD extends DB
         return true;
     }
 
-    public function orderBy($category, $direction)
+    public function orderBy($categoryOrder, $directionOrder)
     {
-        $sql = "SELECT * FROM $this->table ORDER BY $category $direction";
+        $sql = "SELECT * FROM $this->table ORDER BY $categoryOrder $directionOrder";
         $sql = DB::prepare($sql);
         $sql->execute(array());
-        $value = $sql->fetchAll(PDO::FETCH_ASSOC);
-        return $value;
+        $valueOrder = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $valueOrder;}
+
+    public function search($search, $column, $category, $direction){
+        $sql = "SELECT * FROM $this->table WHERE $column LIKE '%{$search}%' ORDER BY $category $direction";
+        $sql = DB::prepare($sql);
+        $sql->execute(array($search));
+        $valueSearch = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $valueSearch;
+
     }
 }

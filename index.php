@@ -377,23 +377,82 @@ if (isset($_POST['submitDelete'])) {
 
     </div>
     <div class="orderList container">
+        <?php if (isset($contact)) {
+                if (isset($_POST['orderList']) && isset($_POST['orderDirection'])) {
+                   
+                    $direction = $_POST['orderDirection'][0];
+                    $categoryOrder = $_POST['orderList'];
+                    echo $categoryOrder == 'birth';
+                    }}
+                    ?>
         <form method='post' class='d-flex justify-content-md-center align-items-center'>
             <label for="orderList">Order by&nbsp; &nbsp; </label>
             <select class="form-select form-select-sm" name="orderList" aria-label=".form-select-sm example">
-                <option value="name">Name</option>
-                <option value="birth">Birthdate</option>
-                <option value="email">Email</option>
-                <option value="phone">Phone</option>
+                <option <?php if(isset($categoryOrder)){
+                    if($categoryOrder == 'name'){
+                        echo "selected";
+                    }
+                } ?>  value="name">Name</option>
+                <option <?php 
+                if(isset($categoryOrder)){
+                if($categoryOrder == 'birth'){
+                    echo "selected";
+                }}?> value="birth">Birthdate</option>
+                <option <?php 
+                if(isset($categoryOrder)){
+                if($categoryOrder == 'email'){
+                    echo "selected";
+                }}?> value="email">Email</option>
+                <option <?php
+                if(isset($categoryOrder)){ 
+                if($categoryOrder == 'phone'){
+                    echo "selected";
+                }}?> value="phone">Phone</option>
             </select> &nbsp; &nbsp;
             <div class="form-check form-check-inline">
-                <input checked class="form-check-input" type="radio" name="orderDirection[]" id="ascRadio" value="ASC">
-                <label class="form-check-label" for="ascRadio">Asc</label>
+                <input  <?php 
+                if(!isset($direction)){
+                    echo "checked";
+                }
+                if(isset($direction)){
+                    if($direction == 'ASC'){
+                        echo "checked"; 
+                    }
+                } ?> class="form-check-input" type="radio" name="orderDirection[]" id="ascRadio" value="ASC">
+                <label  class="form-check-label" for="ascRadio">Asc</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="orderDirection[]" id="descRadio" value="DESC">
-                <label class="form-check-label" for="descRadio">Desc</label>
+                <input <?php if(isset($direction)){
+                    if($direction == 'DESC'){
+                        echo "checked"; 
+                    }
+                } ?> class="form-check-input" type="radio" name="orderDirection[]" id="descRadio" value="DESC">
+                <label  class="form-check-label" for="descRadio">Desc</label>
             </div>
             <input type="submit" value="Apply">
+        </form>
+    </div>
+    <div class="search container">
+    
+        <form method="POST" class='d-flex justify-content-md-center align-items-center'>
+            <label for="search">Search contact</label>&nbsp; &nbsp;
+            <input type="text" name="search" id="search" class="form-control">&nbsp; by &nbsp;
+            <select class="form-select form-select-sm" name="orderListSearch" aria-label=".form-select-sm example">
+                <option value="nameSearch">Name</option>
+                <option value="birthSearch">Birthdate</option>
+                <option value="emailSearch">Email</option>
+                <option value="phoneSearch">Phone</option>
+    
+            </select> &nbsp; &nbsp;
+            <div class="form-check form-check-inline">
+                <input checked class="form-check-input" type="radio" name="orderDirectionSearch[]" id="ascRadioSearch" value="ASC">
+                <label class="form-check-label" for="ascRadioSearch">Asc</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="orderDirectionSearch[]" id="descRadioSearch" value="DESC">
+                <label class="form-check-label" for="descRadioSearch">Desc</label>
+            </div>
+            <input type="submit" value="Search">&nbsp; &nbsp;
         </form>
     </div>
 
@@ -409,11 +468,12 @@ if (isset($_POST['submitDelete'])) {
         </thead>
         <tbody>
             <?php
+            
             if (isset($contact)) {
                 if (isset($_POST['orderList']) && isset($_POST['orderDirection'])) {
                     $direction = $_POST['orderDirection'][0];
-                    $order = $_POST['orderList'];
-                    $loading = $contact->orderBy($order, $direction);
+                    $categoryOrder = $_POST['orderList'];
+                    $loading = $contact->orderBy($categoryOrder, $direction);
                     if (count($loading) > 0) {
                         foreach ($loading as $ctt) {
                             echo "<tr>

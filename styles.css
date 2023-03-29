@@ -19,9 +19,9 @@ fieldset{
     width: 30%;
 }
 
-.orderList{
+.orderList, .search{
     width: 50%;
 }
-.form-select{
+.form-select, #search{
     width: 20%;
 }
