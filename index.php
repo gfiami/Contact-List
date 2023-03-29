@@ -438,6 +438,7 @@ if (isset($_POST['submitDelete'])) {
            
             $directionSearch = $_POST['orderDirectionSearch'][0];
             $categoryOrderSearch = $_POST['orderListSearch'];
+            $columnSearch = $_POST['columnSearch'];
             }}
     ?>
     
