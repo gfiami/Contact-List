@@ -382,7 +382,6 @@ if (isset($_POST['submitDelete'])) {
                    
                     $direction = $_POST['orderDirection'][0];
                     $categoryOrder = $_POST['orderList'];
-                    echo $categoryOrder == 'birth';
                     }}
                     ?>
         <form method='post' class='d-flex justify-content-md-center align-items-center'>
@@ -433,23 +432,64 @@ if (isset($_POST['submitDelete'])) {
         </form>
     </div>
     <div class="search container">
-    
+    <?php 
+    if (isset($contact)) {
+        if (isset($_POST['orderListSearch']) && isset($_POST['orderDirectionSearch'])) {
+           
+            $directionSearch = $_POST['orderDirectionSearch'][0];
+            $categoryOrderSearch = $_POST['orderListSearch'];
+            }}
+    ?>
         <form method="POST" class='d-flex justify-content-md-center align-items-center'>
             <label for="search">Search contact</label>&nbsp; &nbsp;
             <input type="text" name="search" id="search" class="form-control">&nbsp; by &nbsp;
             <select class="form-select form-select-sm" name="orderListSearch" aria-label=".form-select-sm example">
-                <option value="nameSearch">Name</option>
-                <option value="birthSearch">Birthdate</option>
-                <option value="emailSearch">Email</option>
-                <option value="phoneSearch">Phone</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'nameSearch'){
+                        echo "selected";
+                    }
+                } ?> value="nameSearch">Name</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'birthSearch'){
+                        echo "selected";
+                    }
+                } ?> value="birthSearch">Birthdate</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'emailSearch'){
+                        echo "selected";
+                    }
+                } ?> value="emailSearch">Email</option>
+                <option <?php if(isset($categoryOrderSearch)){
+                    if($categoryOrderSearch == 'phoneSearch'){
+                        echo "selected";
+                    }
+                } ?> value="phoneSearch">Phone</option>
     
             </select> &nbsp; &nbsp;
             <div class="form-check form-check-inline">
-                <input checked class="form-check-input" type="radio" name="orderDirectionSearch[]" id="ascRadioSearch" value="ASC">
+                <input 
+                <?php 
+                if(!isset($directionSearch)){
+                    echo "checked";
+                }
+                if(isset($directionSearch)){
+                    if($directionSearch == 'ASC'){
+                        echo "checked"; 
+                    }
+                }
+
+                ?>
+                 class="form-check-input" type="radio" name="orderDirectionSearch[]" id="ascRadioSearch" value="ASC">
                 <label class="form-check-label" for="ascRadioSearch">Asc</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="orderDirectionSearch[]" id="descRadioSearch" value="DESC">
+                <input 
+                <?php if(isset($directionSearch)){
+                    if($directionSearch == 'DESC'){
+                        echo "checked"; 
+                    }
+                } ?>
+                class="form-check-input" type="radio" name="orderDirectionSearch[]" id="descRadioSearch" value="DESC">
                 <label class="form-check-label" for="descRadioSearch">Desc</label>
             </div>
             <input type="submit" value="Search">&nbsp; &nbsp;
